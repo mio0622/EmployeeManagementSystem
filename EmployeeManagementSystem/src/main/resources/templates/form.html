@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>社員情報管理システム</title>
+    <style>
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        .header {
+            background-color: #0066cc;
+            color: #fff;
+            text-align: center;
+            padding: 10px 0;
+            width: 100%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+        .header .container1 {
+            flex: 1;
+            text-align: center;
+        }
+        .footer {
+            background-color: #0066cc;
+            color: #fff;
+            text-align: center;
+            padding: 10px 0;
+            width: 100%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-top: auto;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            background-color: #fff;
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 25px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            font-size: 24px;
+            line-height: 1.2;
+        }
+        label {
+            display: block;
+            font-size: 16px;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: bold;
+            text-align: left;
+        }
+        input[type="text"], input[type="date"] {
+            margin-bottom: 15px;
+            height: 40px;
+            padding: 10px;
+            width: 100%;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            transition: border-color 0.3s ease;
+        }
+        input[type="text"]:focus, input[type="date"]:focus {
+            border-color: #0066cc;
+            outline: none;
+        }
+        input[type="submit"], button {
+            height: 50px;
+            margin-top: 10px;
+            background-color: #0066cc;
+            color: #fff;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        input[type="submit"]:hover, button:hover {
+            background-color: #f9f9f9;
+            color: #0066cc;
+            border: 1px solid #0066cc;
+			transition: 0.3s;
+        }
+		
+		select {
+		            margin-bottom: 15px;
+		            height: 40px;
+		            padding: 10px;
+		            width: 100%;
+		            font-size: 16px;
+		            border-radius: 5px;
+		            border: 1px solid #ccc;
+		            transition: border-color 0.3s ease;
+		        }
+		        select:focus {
+		            border-color: #0066cc;
+		            outline: none;
+		        }
+        main {
+            flex: 1;
+            padding: 20px;
+            text-align: center;
+            margin-top: 80px;
+        }
+        .btn-container {
+            margin-top: 20px;
+        }
+        .btn-container input[type="submit"] {
+            width: auto;
+            padding: 10px 20px;
+            font-size: 16px;
+            display: inline-block;
+        }
+		
+		.invalid{
+			color:red;
+		}
+		.error{
+						color:red;
+					}
+		
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        
+        <div class="container1">
+            <h1>社員情報管理システム</h1>
+        </div>
+    </header>
+
+    <main>
+		
+        <form action="add" method="post" >
+			<p class = "error" th:if="${ErrorMessage!=null}" th:text="${ErrorMessage}">
+            <div class="container">
+				
+                <label for="employeeName">氏名</label>
+                <input type="text" th:field="${employeeListForm.employeeName}" placeholder="例）山田太郎" required>
+				<div class="invalid" th:errors="${employeeListForm.employeeName}"></div>
+
+	
+
+				<label for="office">所属</label>
+						<select id = "office" name = "office">
+						<option value="東京">東京</option>
+				           <option value="横浜">横浜</option>
+				           <option value="名古屋">名古屋</option>
+				           <option value="大阪">大阪</option>
+				           <option value="京都">京都</option>
+						<option value="神戸">神戸</option>
+				           <option value="岡山">岡山</option>
+
+				       </select>
+				
+                <label for="birthday">生年月日</label>
+                <input type="date" th:field="${employeeListForm.birthday}"  required>
+				<div class="invalid" th:errors="${employeeListForm.birthday}"></div>
+				
+				<label for="password">パスワード</label>
+				<input type="text" th:field="${employeeListForm.password}"  placeholder="4字以上20字以下" required>
+				<div class="invalid" th:errors="${employeeListForm.password}"></div>
+				
+                <input type="submit" value="登録">
+            </div>
+        </form>
+		
+        
+    </main>
+
+    <footer class="footer">
+        <div class="container1">
+            <p>© 2024 社員情報管理システム</p>
+        </div>
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>電卓</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .calculator {
+            width: 240px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            background-color: #fff;
+            overflow: hidden;
+        }
+
+        .display {
+			background-color: #333;
+			    color: #fff;
+			    font-size: 2em; /* デフォルトサイズ */
+			    padding: 20px;
+			    text-align: right;
+			    border-radius: 10px 10px 0 0;
+			    box-sizing: border-box;
+			    word-wrap: break-word; /* テキストが長くなったときに改行されないようにする */
+			    overflow: hidden; 
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1px;
+        }
+
+        button {
+            border: none;
+            background-color: #fff;
+            font-size: 1.5em;
+            cursor: pointer;
+            padding: 20px;
+            transition: background-color 0.2s;
+            box-sizing: border-box;
+        }
+
+        button:hover {
+            background-color: #f0f0f0;
+        }
+
+        .operator {
+            background-color: #f9a825;
+            color: #fff;
+        }
+
+        .operator:hover {
+            background-color: #f57f17;
+        }
+
+        .equal {
+            background-color: #00796b;
+            color: #fff;
+            grid-column: span 4;
+        }
+
+        .equal:hover {
+            background-color: #004d40;
+        }
+
+        .clear {
+            background-color: #d32f2f;
+            color: #fff;
+            grid-column: span 4;
+        }
+
+        .clear:hover {
+            background-color: #c62828;
+        }
+
+        .btn-zero {
+            grid-column: span 2;
+        }
+
+        .another {
+            position: absolute;
+            bottom: 80px;
+            left: 400px;
+        }
+
+        .another button {
+            text-align: left;
+            padding: 10px 20px;
+            background-color: #0066cc;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .another button:hover {
+            background-color: #004c99;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <div class="display" id="display">0</div>
+        <div class="buttons">
+            <button class="btn clear" data-value="C">C</button>
+            <button class="btn" data-value="7">7</button>
+            <button class="btn" data-value="8">8</button>
+            <button class="btn" data-value="9">9</button>
+            <button class="btn operator" data-value="/">÷</button>
+            <button class="btn" data-value="4">4</button>
+            <button class="btn" data-value="5">5</button>
+            <button class="btn" data-value="6">6</button>
+            <button class="btn operator" data-value="*">×</button>
+            <button class="btn" data-value="1">1</button>
+            <button class="btn" data-value="2">2</button>
+            <button class="btn" data-value="3">3</button>
+            <button class="btn operator" data-value="-">-</button>
+            <button class="btn btn-zero" data-value="0">0</button>
+            <button class="btn" data-value=".">.</button>
+            <button class="btn operator" data-value="+">+</button>
+            <button class="btn equal" data-value="=">=</button>
+        </div>
+    </div>
+
+    <div class="another">
+        <form action="back" method="get">
+            <button type="submit">戻る</button>
+        </form>
+    </div>
+	<script>
+	    document.addEventListener('DOMContentLoaded', () => {
+	        const display = document.getElementById('display');
+	        const buttons = document.querySelectorAll('.btn');
+
+	        let currentInput = '';
+	        let operator = '';
+	        let val1 = '';
+	        let val2 = '';
+	        let resultDisplayed = false;
+
+	        // 桁数に応じてフォントサイズを調整する関数
+	        function adjustFontSize() {
+	            const maxFontSize = 2; // デフォルトのフォントサイズ（em）
+	            const minFontSize = 0.5; // 最小のフォントサイズ（em）
+	            const maxDigits = 10; // デフォルトサイズで表示できる最大桁数
+
+	            const textLength = display.textContent.length;
+
+	            if (textLength > maxDigits) {
+	                const newFontSize = Math.max(minFontSize, maxFontSize - (textLength - maxDigits) * 0.1);
+	                display.style.fontSize = `${newFontSize}em`;
+	            } else {
+	                display.style.fontSize = `${maxFontSize}em`;
+	            }
+	        }
+
+	        buttons.forEach(button => {
+	            button.addEventListener('click', () => {
+	                const value = button.dataset.value;
+
+	                if (value === 'C') {
+	                    currentInput = '';
+	                    operator = '';
+	                    val1 = '';
+	                    val2 = '';
+	                    display.textContent = '0';
+	                    resultDisplayed = false;
+	                } else if (value === '=') {
+	                    if (val1 && operator && currentInput) {
+	                        val2 = currentInput;
+	                        const expression = `${val1} ${operator} ${val2}`;
+
+	                        // REST APIへのリクエスト
+	                        fetch('/api/calculate?expression=' + encodeURIComponent(expression))
+	                            .then(response => response.json())
+	                            .then(data => {
+	                                if (data.error) {
+	                                    display.textContent = data.error;
+	                                } else {
+	                                    let result = data.result;
+
+	                                    // 結果が大きな場合は指数表記を使用
+	                                    if (typeof result === 'string' && result.includes('e')) {
+	                                        result = Number(result).toExponential(6);
+	                                    } else if (typeof result === 'string' || typeof result === 'number') {
+	                                        if (Math.abs(Number(result)) >= 1e12) {
+	                                            result = Number(result).toExponential(6); // 大きな数値は指数表記
+	                                        } else {
+	                                            result = Number(result).toLocaleString('en', {
+	                                                minimumFractionDigits: 0,
+	                                                maximumFractionDigits: 10  // 小数点以下最大10桁まで表示
+	                                            });
+	                                        }
+	                                    }
+
+	                                    display.textContent = result;
+	                                    currentInput = result.toString();
+	                                    operator = '';
+	                                    val1 = '';
+	                                    val2 = '';
+	                                    resultDisplayed = true;
+
+	                                    // フォントサイズを調整
+	                                    adjustFontSize();
+	                                }
+	                            })
+	                            .catch(error => {
+	                                console.error('Error:', error);
+	                                display.textContent = 'Error';
+	                            });
+	                    }
+	                } else if (['+', '-', '*', '/'].includes(value)) {
+	                    val1 = currentInput || display.textContent;
+	                    operator = value;
+	                    currentInput = '';
+	                } else if (value === '.') {
+	                    if (!currentInput.includes('.')) {
+	                        currentInput += value;
+	                        display.textContent = currentInput;
+	                    }
+	                } else {
+	                    if (resultDisplayed) {
+	                        currentInput = value;
+	                        resultDisplayed = false;
+	                    } else {
+	                        currentInput += value;
+	                    }
+	                    display.textContent = currentInput;
+	                }
+
+	                // 桁数に応じてフォントサイズを調整
+	                adjustFontSize();
+	            });
+	        });
+	    });
+	</script>
+
+
+
+
+</body>
+</html>

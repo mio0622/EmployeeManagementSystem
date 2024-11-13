@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>メニュー</title>
+    <style>
+        /* 全体のレイアウト設定 */
+        body {
+            background-color: #f7f7f7;
+            font-family: Arial, sans-serif;
+            font-size: 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100vh;
+            margin: 0;
+        }
+
+        /* ヘッダー設定 */
+        .header {
+            background-color: #0066cc;
+            color: #fff;
+            text-align: center;
+            padding: 15px 0;
+            width: 100%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+
+        .header h1 {
+            margin: 0;
+        }
+
+        /* ログアウトボタンのスタイル */
+        .logout-button {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: #d32f2f;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        .logout-button:hover {
+            background-color: #c62828;
+        }
+
+        /* フッター設定 */
+        .footer {
+            background-color: #0066cc;
+            color: #fff;
+            text-align: center;
+            padding: 10px 0;
+            width: 100%;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* メインコンテンツの余白設定 */
+        main {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-top: 80px; /* ヘッダーの高さ分の余白 */
+            padding-bottom: 50px; /* フッターの高さ分の余白 */
+        }
+
+        /* ナビゲーションメニューのスタイル */
+        nav {
+            visibility: hidden;
+            width: 100%;
+            max-width: 400px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        /* ボタンスタイル */
+        .menu-button {
+            visibility: visible;
+            width: 100%;
+            padding: 20px;
+            margin: 5px ;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            text-align: center;
+            transition: background-color 0.3s;
+        }
+
+        .menu-button:hover {
+            background-color: #2980b9;
+        }
+
+        /* モバイル対応レイアウト */
+        @media (max-width: 600px) {
+            nav {
+                width: 90%;
+            }
+
+            .menu-button {
+                font-size: 14px;
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ヘッダー -->
+<header class="header">
+    <h1>社員情報管理システム</h1>
+    
+    <form action="logout" method="post">
+        <button class="logout-button" type="submit">ログアウト</button>
+    </form>
+</header>
+
+<!-- メインコンテンツ -->
+<main>
+    <nav>
+        <form action="view" method="get">
+            <button class="menu-button" type="submit">社員情報閲覧</button>
+        </form>
+        <form action="calc" method="get">
+            <button class="menu-button" type="submit">四則演算</button>
+        </form>
+        <form action="history" method="get">
+            <button class="menu-button" type="submit">演算履歴閲覧</button>
+        </form>
+    </nav>
+</main>
+
+<!-- フッター -->
+<footer class="footer">
+    <p>© 2024 社員情報管理システム</p>
+</footer>
+
+</body>
+</html>
